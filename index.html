@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PricePulse - Best Deals Across India</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 2rem;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 50px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        main {
+            margin-top: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .results-container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .sort-select, .filter-select {
+            padding: 10px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            border: 1px solid #e1e5e9;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: white;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f8f9fa;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+
+        .price-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .best-price {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .price-indicator {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .indicator {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .indicator.good {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .indicator.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .indicator.danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .platform-logos {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .platform-logo {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .buy-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        .deal-score {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #b8860b;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4ecdc4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .search-container {
+                margin: 0;
+                order: -1;
+            }
+            
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">🛒 PricePulse</div>
+                <div class="search-container">
+                    <input type="text" class="search-box" id="searchInput" placeholder="Search for products across Amazon, Flipkart, Myntra & more...">
+                    <button class="search-btn" onclick="searchProducts()">🔍 Search</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalProducts">0</div>
+                <div>Products Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="bestDeals">0</div>
+                <div>Best Deals</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="savings">₹0</div>
+                <div>Potential Savings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="lowestPrice">₹0</div>
+                <div>Lowest Price</div>
+            </div>
+        </div>
+
+        <div class="results-container">
+            <div class="results-header">
+                <h2 id="resultsTitle">Latest Deals</h2>
+                <div>
+                    <select class="sort-select" id="sortSelect" onchange="sortResults()">
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="dealscore-desc">Best Deals First</option>
+                        <option value="discount-desc">Highest Discount</option>
+                    </select>
+                    <select class="filter-select" id="filterSelect" onchange="filterResults()">
+                        <option value="all">All Platforms</option>
+                        <option value="amazon">Amazon</option>
+                        <option value="flipkart">Flipkart</option>
+                        <option value="myntra">Myntra</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="resultsContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <span style="margin-left: 1rem;">Loading deals...</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mock data for demonstration (replace with real API calls)
+        const mockProducts = [
+            {
+                id: 1,
+                title: "Apple iPhone 15 Pro Max 256GB",
+                image: "https://images.unsplash.com/photo-1695906326190-087b54a7d44f?w=400",
+                prices: [
+                    { platform: "amazon", price: 119999, original: 144900, discount: 17.2, url: "#" },
+                    { platform: "flipkart", price: 117499, original: 144900, discount: 18.9, url: "#" },
+                    { platform: "myntra", price: 122999, original: 144900, discount: 15.1, url: "#" }
+                ],
+                ratings: 4.7,
+                reviews: 12543,
+                stock: "In Stock"
+            },
+            {
+                id: 2,
+                title: "Samsung Galaxy S24 Ultra 512GB",
+                image: "https://images.unsplash.com/photo-1701179467334-eed49d4eb47f?w=400",
+                prices: [
+                    { platform: "amazon", price: 124999, original: 149999, discount: 16.7, url: "#" },
+                    { platform: "flipkart", price: 122999, original: 149999, discount: 18.0, url: "#" }
+                ],
+                ratings: 4.6,
+                reviews: 8432,
+                stock: "In Stock"
+            },
+            {
+                id: 3,
+                title: "Sony WH-1000XM5 Wireless Headphones",
+                image: "https://images.unsplash.com/photo-1613040809021-b4ef4a1c95e6?w=400",
+                prices: [
+                    { platform: "amazon", price: 24999, original: 29990, discount: 16.6, url: "#" },
+                    { platform: "flipkart", price: 23999, original: 29990, discount: 19.9, url: "#" },
+                    { platform: "myntra", price: 25499, original: 29990, discount: 14.9, url: "#" }
+                ],
+                ratings: 4.8,
+                reviews: 3421,
+                stock: "Low Stock"
+            },
+            {
+                id: 4,
+                title: "Apple Watch Series 9 45mm",
+                image: "https://images.unsplash.com/photo-1561111790-f9f3a9a5a2e1?w=400",
+                prices: [
+                    { platform: "amazon", price: 42999, original: 49900, discount: 13.8, url: "#" },
+                    { platform: "flipkart", price: 41999, original: 49900, discount: 15.8, url: "#" }
+                ],
+                ratings: 4.5,
+                reviews: 2345,
+                stock: "In Stock"
+            }
+        ];
+
+        let allProducts = [...mockProducts];
+        let filteredProducts = [...mockProducts];
+
+        function searchProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            if (query.length < 2) {
+                showResults(allProducts);
+                return;
+            }
+
+            // Simulate API search
+            setTimeout(() => {
+                const results = allProducts.filter(product => 
+                    product.title.toLowerCase().includes(query)
+                );
+                showResults(results);
+            }, 500);
+        }
+
+        function showResults(products) {
+            const resultsContent = document.getElementById('resultsContent');
+            const statsGrid = document.getElementById('statsGrid');
+            
+            if (products.length === 0) {
+                resultsContent.innerHTML = `
+                    <div class="no-results">
+                        <h3>😔 No products found</h3>
+                        <p>Try searching with different keywords</p>
+                    </div>
+                `;
+                updateStats(0, 0, 0, 0);
+                return;
+            }
+
+            filteredProducts = products;
+            sortResults(); // Apply current sorting
+            
+            updateStats(products.length, 
+                products.filter(p => getBestDealScore(p) > 80).length,
+                calculateTotalSavings(products),
+                Math.min(...products.map(p => getLowestPrice(p)))
+            );
+        }
+
+        function getLowestPrice(product) {
+            return Math.min(...product.prices.map(p => p.price));
+        }
+
+        function getBestDealScore(product) {
+            const bestPrice = getLowestPrice(product);
+            const avgOriginal = product.prices.reduce((sum, p) => sum + p.original, 0) / product.prices.length;
+            const discount = ((avgOriginal - bestPrice) / avgOriginal) * 100;
+            const ratingScore = product.ratings * 10;
+            return Math.round((discount * 1.5 + ratingScore) / 2.5);
+        }
+
+        function calculateTotalSavings(products) {
+            return products.reduce((total, product) => {
+                const bestPrice = getLowestPrice(product);
+                const avgOriginal = product.prices.reduce((sum, p) => sum + p.original, 0) / product.prices.length;
+                return total + (avgOriginal - bestPrice);
+            }, 0).toLocaleString('en-IN');
+        }
+
+        function updateStats(total, bestDeals, savings, lowestPrice) {
+            document.getElementById('totalProducts').textContent = total;
+            document.getElementById('bestDeals').textContent = bestDeals;
+            document.getElementById('savings').textContent = `₹${savings}`;
+            document.getElementById('lowestPrice').textContent = `₹${lowestPrice.toLocaleString('en-IN')}`;
+        }
+
+        function renderProduct(product) {
+            const bestPrice = product.prices.reduce((best, current) => 
+                current.price < best.price ? current : best
+            );
+            const dealScore = getBestDealScore(product);
+            const scoreColor = dealScore > 85 ? '🟢' : dealScore > 70 ? '🟡' : '🔴';
+            
+            const discountPercent = Math.max(...product.prices.map(p => p.discount));
+            const indicators = [];
+            
+            if (dealScore > 85) indicators.push({ text: 'Super Deal', class: 'good' });
+            if (discountPercent > 20) indicators.push({ text: `${discountPercent.toFixed(1)}% OFF`, class: 'good' });
+            if (product.stock === 'Low Stock') indicators.push({ text: 'Low Stock', class: 'warning' });
+            if (product.ratings > 4.5) indicators.push({ text: `${product.ratings}⭐`, class: 'good' });
+
+            return `
+                <div class="product-card">
+                    <div class="deal-score">${scoreColor} ${dealScore}</div>
+                   
